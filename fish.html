@@ -7,6 +7,14 @@
     <script type="text/javascript">
       var socket = io.connect('http://104.131.169.15:3000');
 
+      socket.on('connect', function(){
+        console.log("connected");
+      });
+
+      socket.on('appearance', function(color){
+        document.body.style.backgroundColor = color;
+      });
+
       var now;
       var prev = distance = 0;
       var curr = -2;

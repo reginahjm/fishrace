@@ -31,6 +31,7 @@ function requestHandler(req,res){
 
 // ==================== SOCKET.IO =====================
 var allSockets = [];
+var appearance = [];
 var io = require('socket.io').listen(httpServer);
 
 io.sockets.on('connection',
@@ -38,12 +39,23 @@ io.sockets.on('connection',
     console.log("New client. " + socket.id);
     socket.totalDist = 0;
     allSockets.push(socket);
+    var red = Math.floor(Math.random()*255);
+    var green = Math.floor(Math.random()*255);
+    var blue = Math.floor(Math.random()*255);
+    var color = "rgba("+red+","+green+","+blue+",1)";
+    console.log(color);
+    appearance.push(color);
+    allSockets[allSockets.length-1].emit("appearance",color);
+
+    socket.broadcast.emit("enterRace", color,socket.id);
 
     socket.on('numbers',
       function (currDist) {
+        console.log("currDist: "+currDist);
         for (var i=0; i<allSockets.length; i++){
           if (allSockets[i]===socket){
             allSockets[i].totalDist += currDist;
+            socket.broadcast.emit("updateRace",totalDist,allSockets[i].id);
             break; // leave for the for loop
           }
         }
