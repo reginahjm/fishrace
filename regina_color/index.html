@@ -1,0 +1,139 @@
+<html>
+	<head id="title">
+	live hunt
+		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js"></script>
+
+
+
+		
+		<script type="text/javascript">
+		
+			var socket = io.connect('http://104.131.38.187:8080/');
+			
+			socket.on('connect', function() {
+				console.log("Connected");
+				console.log("Color");
+			});
+
+			// Receive from any event
+			socket.on('chatmessage', function (data) {
+				console.log(data);
+				document.getElementById('messages').innerHTML = "" + data + 
+ + "" + document.getElementById('messages').innerHTML;
+			});
+
+			socket.on('typename', function (data){
+				console.log(data);
+				document.getElementById('typename').innerHTML = data;
+			});
+			
+			var sendmessage = function(message) {
+
+				col = message;
+				$('#rect').css('background-color',''+ message);
+				$('#rect').show();
+ 				$('#rect').css("display:inline");
+
+				console.log("chatmessage: " + message);
+				socket.emit('chatmessage', message);
+			
+				
+			};
+
+			var typename = function(name){
+				console.log("username: " + name);
+				socket.emit('typename' ,name);
+			}
+		
+	
+			var canvas;
+			var context;
+			//var col = '#ffffff';
+
+		window.addEventListener('load', function() {
+			canvas = document.getElementById('mycanvas');			
+			context = canvas.getContext('2d');
+			
+			// context.fillStyle="#ffffff";
+			console.log("Color");
+			
+				
+			
+		});
+		</script>		
+		
+	</head>
+
+ <body id="body">
+
+	<div id="messages">
+	 <!-- type color -->
+	 <br>
+	 <br>
+		 <input type="text" id="message" name="message" placeholder="type your color">
+		 <input type="submit" value="color" onclick="sendmessage(document.getElementById('message').value);">
+
+		 <!-- set username -->
+		 <input type="text" id="name" name="message" placeholder="set username">
+		 <input type="submit" value="start" onclick="typename(document.getElementById('name').value);">
+
+		 <div id="result">
+			<!-- rect  -->
+			 <div id="rect">
+			 </div>
+
+			<!-- where username shows -->
+			 <div id="typename">
+			 
+			</div>
+		</div>
+
+	</div>
+
+<p>
+	 <canvas width="1000" height="300" id="mycanvas"/> </canvas>
+ </p>
+ 
+ </body>
+
+	<style type="text/css">
+		#title{
+
+			font-color: white;
+
+		}
+
+		#rect{
+			margin-top:10px;
+			width: 100px;
+			height: 100px;		
+		}
+
+	 	#messages{
+	 		
+/*	 		position:absolute;
+		    top: 50%;
+		    left: 50%;*/
+		    margin-top: 140px;
+	 		width: 450px;
+	 		height: 220px;
+	 		margin-left: 300px;
+	 		padding-left: 60px;
+	 		background-color: white;
+	 		opacity: 0.7;
+    		border-radius: 25px;
+	 	}
+
+	 	#typename{
+	 		width:100px;
+	 		height: 30px;
+	 	}
+
+	 	#body{
+	 		background-image: url("http://www.drodd.com/images10/twitter-backgrounds7.jpg");
+	 		/*background-color: black;*/
+	 	}
+
+		</style>
+</html>
