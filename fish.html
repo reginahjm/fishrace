@@ -1,0 +1,33 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <p id="texthere"></p>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+      var socket = io.connect('http://104.131.169.15:3000');
+
+      var now;
+      var prev = distance = 0;
+      var curr = -2;
+
+      function orientationChange(e) {
+        now = millis();
+        var alpha = Math.floor(e.alpha), //FISH MOVEMENT HERE
+        beta = Math.floor(e.beta), //rotating along head
+        gamma = Math.floor(e.gamma); //rolling along sides
+        document.getElementById("texthere").innerHTML = alpha + " " + beta + " " + gamma + " ";
+
+        if (curr < 0){
+          curr = alpha;
+        }
+        prev = curr;
+        curr = alpha;
+        distance = Math.abs(curr-prev);
+        socket.emit("numbers", distance);
+        // calibrate what the entire course of travel should be??
+      }
+      window.addEventListener('deviceorientation',orientationChange,false);
+    </script>
+  </body>
+</html>
