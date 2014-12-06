@@ -41,6 +41,7 @@
       socket.on('updateRace', function(newTotalDist, socketid){
         var thisfish = document.getElementById(socketid);
         console.log(newTotalDist);
+        thisfish.style.bottom = newTotalDist;
         thisfish.innerHTML = newTotalDist; //once totaldist is calibrated, should change bottom
       });
     </script>
