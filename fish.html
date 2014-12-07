@@ -34,9 +34,9 @@
         distance = Math.abs(curr-prev);
         spurt += distance;
 
-        if (spurt >= 360){
+        if (spurt >= 180){
           socket.emit("move"); 
-          spurt = spurt - 360;       
+          spurt = spurt - 180;       
         }
       }
 

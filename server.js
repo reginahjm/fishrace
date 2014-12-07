@@ -56,7 +56,7 @@ io.sockets.on('connection',
           if (allSockets[i]===socket){
             allSockets[i].totalDist += 5;
             console.log(i+" "+allSockets[i].totalDist);
-            // socket.broadcast.emit("updateRace",totalDist,allSockets[i].id);
+            socket.broadcast.emit("updateRace",allSockets[i].totalDist,allSockets[i].id);
             break; // leave for the for loop
           }
         }
@@ -68,6 +68,7 @@ io.sockets.on('connection',
         console.log("Disconnected " + socket.id);
         for (var i=0; i<allSockets.length; i++){
           if (allSockets[i]===socket){
+            socket.broadcast.emit("takeoutFish",allSockets[i].id);
             allSockets.splice(i,1); //splice = the javascript way of erasing things from an array
             break; // leave for the for loop
           }
