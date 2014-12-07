@@ -14,7 +14,8 @@
 
       <!-- player 1 -->
       <div id="fish1">
-        <div class="fishbodies body-1">
+        <div id="body-1" class="fishbodies-pattern"></div>
+        <div class="fishbodies">
           <div class="eye">
             <div class="pupil"></div>
           </div>
@@ -25,7 +26,8 @@
 
       <!-- player 2 -->
       <div id="fish2">
-        <div class="fishbodies body-2">
+        <div id="body-2" class="fishbodies-pattern"></div>
+        <div class="fishbodies" >
           <div class="eye">
               <div class="pupil"></div>
            </div>
@@ -36,7 +38,7 @@
 
       <!-- player 3 -->
       <div id="fish3">
-        <div class="fishbodies body-3">
+        <div class="fishbodies" id="body-3">
           <div class="eye">
               <div class="pupil"></div>
            </div>
@@ -47,7 +49,7 @@
 
       <!-- player 4 -->
       <div id="fish4">
-        <div class="fishbodies body-4">
+        <div class="fishbodies" id="body-4">
           <div class="eye">
              <div class="pupil"></div>
            </div>
@@ -79,6 +81,7 @@
       socket.on('enterRace', function(color, socketid){
         
         var thisfishid = "fish"+counter;
+        var thisfishid_ = "body-"+counter;
         var newfish = {
           fishcolor: color,
           id: socketid,
@@ -87,12 +90,13 @@
         }
         fish.push(newfish);
         console.log(newfish);
-
         counter++;
 
         var thisfish = document.getElementById(thisfishid);
+        var thisfishbody = document.getElementById(thisfishid_);
         thisfish.style.bottom = 100;
-        thisfish.style.backgroundColor = color;
+        thisfishbody.style.backgroundColor = color;
+
 
         // var thisfish = document.createElement("div");
         // document.body.appendChild(thisfish);
@@ -108,11 +112,17 @@
       });
 
       socket.on('updateRace', function(newTotalDist, socketid){
-        var thisfish = document.getElementById(socketid); // NEED FIX NEED FIX
-        if (newTotalDist >= window.innerHeight-100){
-          document.getElementById("texthere").innerHTML = "We have a winner!!";
-        } else {
-          thisfish.style.bottom = newTotalDist+100;
+        for (var i=0;i<fish.length;i++){
+          console.log(socketid+" "+newTotalDist);
+          if (fish[i].id == socketid){
+            var thisfish = document.getElementById(fish[i].domid); // NEED FIX NEED FIX
+            if (newTotalDist >= window.innerHeight-100){
+              document.getElementById("texthere").innerHTML = "We have a winner!!";
+            } else {
+              thisfish.style.bottom = newTotalDist+100;
+            }
+            break;
+          }
         }
       });
 

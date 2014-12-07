@@ -3,6 +3,7 @@
   </head>
   <body>
     <div id="map">null</div>
+    <div id="mop"></div>
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
       var socket = io.connect('http://104.131.169.15:3000');
@@ -19,7 +20,8 @@
 
         document.body.style.backgroundColor = "black";
         document.body.style.color = "white";
-        document.getElementById("map").innerHTML = "YOU ARE NOT A FISH HAHAHAHA";
+        document.getElementById("mop").innerHTML = "YOU ARE NOT A FISH HAHAHAHA";
+        document.getElementById("map").style.display = "none";
       });
 
       if (areyoufish==true){

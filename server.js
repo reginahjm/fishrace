@@ -59,7 +59,7 @@ io.sockets.on('connection',
       }
 
       if (allFish.length == 4){
-        raceStarted = true;
+        raceStarted = false;
       }
     });
 
