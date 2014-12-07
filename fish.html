@@ -1,0 +1,46 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <div id="map">null</div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+      var socket = io.connect('http://104.131.169.15:3000');
+
+      socket.on('connect', function(){
+        console.log("connected");
+      });
+
+      socket.on('appearance', function(color){
+        document.body.style.backgroundColor = color;
+      });
+
+      var now;
+      var prev = distance = spurt = 0;
+      var curr = -2;
+
+      var alpha;
+      function orientationChange(e) {    
+        now = new Date().getMilliseconds();
+        alpha = Math.floor(e.alpha); //FISH MOVEMENT HERE          
+        var map = document.getElementById("map");
+        map.innerHTML = alpha+"px";
+
+        if (curr < 0){
+          curr = alpha;
+        }
+        prev = curr;
+        curr = alpha;
+        distance = Math.abs(curr-prev);
+        spurt += distance;
+
+        if (spurt >= 180){
+          socket.emit("move"); 
+          spurt = spurt - 180;       
+        }
+      }
+
+      window.addEventListener('deviceorientation',orientationChange,false);
+    </script>
+  </body>
+</html>
