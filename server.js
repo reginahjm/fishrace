@@ -30,47 +30,64 @@ function requestHandler(req,res){
 }
 
 // ==================== SOCKET.IO =====================
-var allSockets = [];
+var allFish = [];
 var appearance = [];
 var io = require('socket.io').listen(httpServer);
 
+var raceStarted = false;
+
 io.sockets.on('connection',
   function(socket){
-    console.log("New client. " + socket.id);
-    socket.totalDist = 0;
-    allSockets.push(socket);
-    var red = Math.floor(Math.random()*255);
-    var green = Math.floor(Math.random()*255);
-    var blue = Math.floor(Math.random()*255);
-    var color = "rgba("+red+","+green+","+blue+",0.3)";
-    console.log(color);
-    appearance.push(color);
-    allSockets[allSockets.length-1].emit("appearance",color);
 
-    socket.broadcast.emit("enterRace", color,socket.id);
+    socket.on('iamfish', function(){
+      console.log("i am a fish: "+socket.id+". "+allFish.length);
+      if (allFish.length < 4 && raceStarted == false){
+        console.log("server: sure you are fish");
+        allFish.push(socket);
+        socket.totalDist = 0;
+        var red = Math.floor(Math.random()*255);
+        var green = Math.floor(Math.random()*255);
+        var blue = Math.floor(Math.random()*255);
+        var color = "rgba("+red+","+green+","+blue+",0.3)";
+        console.log(color);
+        appearance.push(color);
+        socket.emit("appearance",color); //fish.html
+        socket.broadcast.emit("enterRace", color,socket.id); //pool.html
+      } else {
+        console.log("actually you are not");
+        socket.emit("younotfish");
+      }
+
+      if (allFish.length == 4){
+        raceStarted = true;
+      }
+    });
 
     socket.on('move',
       function () {
-        console.log("moving");
-        for (var i=0; i<allSockets.length; i++){
-          if (allSockets[i]===socket){
-            allSockets[i].totalDist += 5;
-            console.log(i+" "+allSockets[i].totalDist);
-            socket.broadcast.emit("updateRace",allSockets[i].totalDist,allSockets[i].id);
-            break; // leave for the for loop
+        for (var i=0; i<allFish.length; i++){
+          if (allFish[i]===socket){
+            allFish[i].totalDist += 5;
+            console.log(i+" "+allFish[i].totalDist);
+            socket.broadcast.emit("updateRace",allFish[i].totalDist,allFish[i].id);
+            break; 
           }
         }
       }
     );
 
+// ask Shawn: at disconnect how to know which fish to take out??
     socket.on('disconnect',
-      function (socket) {
-        console.log("Disconnected " + socket.id);
-        for (var i=0; i<allSockets.length; i++){
-          if (allSockets[i]===socket){
-            socket.broadcast.emit("takeoutFish",allSockets[i].id);
-            allSockets.splice(i,1); //splice = the javascript way of erasing things from an array
-            break; // leave for the for loop
+      function () {
+        for (var i=0; i<allFish.length; i++){
+          if (allFish[i]===socket){
+            // update fish count on server side.
+            var howmanyleft = allFish.length-1;
+            console.log("Disconnected " + socket.id + ". "+howmanyleft+" fish left.");
+            // take out fish sprite in pool
+            socket.broadcast.emit("takeoutFish",allFish[i].id);
+            allFish.splice(i,1); 
+            break; 
           }
         }
       }

@@ -4,6 +4,11 @@
   </head>
   <body>
     <p id="texthere"></p>
+    <div id="startplatform">
+
+    </div>
+
+
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
       var fish = [];
@@ -31,7 +36,7 @@
         thisfish.style.width = "50px";
         thisfish.style.height = "50px";
         thisfish.style.left = startposition;
-        thisfish.style.bottom = 10;
+        thisfish.style.bottom = 100;
         thisfish.style.backgroundColor = color;
 
         startposition += 100;
@@ -39,14 +44,17 @@
       });
 
       socket.on('updateRace', function(newTotalDist, socketid){
-        console.log(newTotalDist);
         var thisfish = document.getElementById(socketid);
-        thisfish.style.bottom = newTotalDist+10;
+        if (newTotalDist >= window.innerHeight-100){
+          document.getElementById("texthere").innerHTML = "We have a winner!!";
+        } else {
+          thisfish.style.bottom = newTotalDist+100;
+        }
       });
 
       socket.on('takeoutFish', function(socketid){
         var thisfish = document.getElementById(socketid);
-        thisfish.display = "none";
+        thisfish.style.display = "none";
       })
     </script>
   </body>

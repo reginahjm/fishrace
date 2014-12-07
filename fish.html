@@ -6,41 +6,56 @@
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
       var socket = io.connect('http://104.131.169.15:3000');
+      var areyoufish = true;
+
 
       socket.on('connect', function(){
         console.log("connected");
+        socket.emit("iamfish");
+      });
+      socket.on('younotfish', function(){
+        console.log("areyoufish should be turned false");
+        areyoufish = false;
+
+        document.body.style.backgroundColor = "black";
+        document.body.style.color = "white";
+        document.getElementById("map").innerHTML = "YOU ARE NOT A FISH HAHAHAHA";
       });
 
-      socket.on('appearance', function(color){
-        document.body.style.backgroundColor = color;
-      });
+      if (areyoufish==true){
+      // =================== IF YOU ARE A FISH =========================
+        window.addEventListener('deviceorientation',orientationChange,false);        
+        socket.on('appearance', function(color){
+          document.body.style.backgroundColor = color;
+        });
 
-      var now;
-      var prev = distance = spurt = 0;
-      var curr = -2;
+        var now;
+        var prev = distance = spurt = 0;
+        var curr = -2;
 
-      var alpha;
-      function orientationChange(e) {    
-        now = new Date().getMilliseconds();
-        alpha = Math.floor(e.alpha); //FISH MOVEMENT HERE          
-        var map = document.getElementById("map");
-        map.innerHTML = alpha+"px";
+        var alpha;
 
-        if (curr < 0){
+        function orientationChange(e) {    
+          now = new Date().getMilliseconds();
+          alpha = Math.floor(e.alpha); //FISH MOVEMENT HERE          
+          var map = document.getElementById("map");
+          map.innerHTML = alpha+"px";
+
+          if (curr < 0){
+            curr = alpha;
+          }
+          prev = curr;
           curr = alpha;
-        }
-        prev = curr;
-        curr = alpha;
-        distance = Math.abs(curr-prev);
-        spurt += distance;
+          distance = Math.abs(curr-prev);
+          spurt += distance;
 
-        if (spurt >= 180){
-          socket.emit("move"); 
-          spurt = spurt - 180;       
+          if (spurt >= 90){
+            socket.emit("move"); 
+            spurt = spurt - 90;       
+          }
         }
+      //===============================================================
       }
-
-      window.addEventListener('deviceorientation',orientationChange,false);
     </script>
   </body>
 </html>
