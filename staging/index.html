@@ -1,0 +1,105 @@
+<html>
+<head>
+    <link rel="stylesheet" href="http://www.reginahong.com/JS/liveweb/style.css" media="screen" type="text/css" />
+</head>
+
+<body>
+
+ <!-- pool contains background, fish -->
+<div id="pool">
+
+	<!-- vertical lines  -->
+	<div class ="lines line-1"></div>
+	<div class ="lines line-2"></div>
+	<div class ="lines line-3"></div>
+
+	<!-- player 1 -->
+	<div id="fish">
+		<div class="fishbodies body-1">
+			<div class="eye">
+				<div class="pupil"></div>
+			</div>
+		</div>
+			<div class="fin"></div>
+			<div class="fin fin-bottom"></div>
+	</div>
+
+	<!-- player 2 -->
+	<div id="fish2">
+		<div class="fishbodies body-2">
+			<div class="eye">
+			    <div class="pupil"></div>
+			 </div>
+		</div>
+		<div class="fin"></div>
+		<div class="fin fin-bottom"></div>
+	</div>
+
+	<!-- player 3 -->
+	<div id="fish3">
+		<div class="fishbodies body-3">
+			<div class="eye">
+			    <div class="pupil"></div>
+			 </div>
+		</div>
+		<div class="fin"></div>
+		<div class="fin fin-bottom"></div>
+	</div>
+
+	<!-- player 4 -->
+	<div id="fish4">
+		<div class="fishbodies body-4">
+			<div class="eye">
+			 	<div class="pupil"></div>
+			 </div>
+		</div>
+		 <div class="fin"></div>
+		<div class="fin fin-bottom"></div>
+
+	</div>
+
+	<!-- Bubble deco -->
+	<div class="bubbles bubble-1"></div>
+
+</div>   <!-- pool -->
+
+<div id='map'>
+</div>
+
+</body>
+
+
+<script type="text/javascript">
+
+var alpha, beta, gamma;
+
+function onOrientationChange(e) {
+   alpha = e.alpha,
+   beta = e.beta,
+   gamma = e.gamma;
+
+    var elem = document.getElementById('map');
+    map.innerHTML = alpha + " " + beta + " " + gamma;
+
+    console.log(Math.floor(alpha) + " " + Math.floor(beta) + " " + Math.floor(gamma));
+
+    move();
+	}
+
+window.addEventListener('deviceorientation', onOrientationChange, false);
+
+function move(){
+	var pos = alpha+"px;";
+	document.getElementById("fish").setAttribute('style', 'top:' + pos);
+
+	// document.getElementById("tail").setAttribute('style', 'transform:' + rotate(40deg));
+
+}
+
+
+</script>
+
+
+
+
+</html>
