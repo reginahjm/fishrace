@@ -48,7 +48,7 @@ io.sockets.on('connection',
         var red = Math.floor(Math.random()*255);
         var green = Math.floor(Math.random()*255);
         var blue = Math.floor(Math.random()*255);
-        var color = "rgba("+red+","+green+","+blue+",0.3)";
+        var color = "rgba("+red+","+green+","+blue+",1)";
         console.log(color);
         appearance.push(color);
         socket.emit("appearance",color); //fish.html

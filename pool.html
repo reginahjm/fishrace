@@ -1,11 +1,67 @@
 <html>
   <head>
-    <link type="stylesheet" href="style.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
   </head>
   <body>
     <p id="texthere"></p>
-    <div id="startplatform">
 
+    <div id="pool">
+
+      <!-- vertical lines  -->
+<!--       <div class ="lines line-1"></div>
+      <div class ="lines line-2"></div>
+      <div class ="lines line-3"></div> -->
+
+      <!-- player 1 -->
+      <div id="fish1">
+        <div class="fishbodies body-1">
+          <div class="eye">
+            <div class="pupil"></div>
+          </div>
+        </div>
+          <div class="fin"></div>
+          <div class="fin fin-bottom"></div>
+      </div>
+
+      <!-- player 2 -->
+      <div id="fish2">
+        <div class="fishbodies body-2">
+          <div class="eye">
+              <div class="pupil"></div>
+           </div>
+        </div>
+        <div class="fin"></div>
+        <div class="fin fin-bottom"></div>
+      </div>
+
+      <!-- player 3 -->
+      <div id="fish3">
+        <div class="fishbodies body-3">
+          <div class="eye">
+              <div class="pupil"></div>
+           </div>
+        </div>
+        <div class="fin"></div>
+        <div class="fin fin-bottom"></div>
+      </div>
+
+      <!-- player 4 -->
+      <div id="fish4">
+        <div class="fishbodies body-4">
+          <div class="eye">
+             <div class="pupil"></div>
+           </div>
+        </div>
+         <div class="fin"></div>
+        <div class="fin fin-bottom"></div>
+
+      </div>
+
+      <!-- Bubble deco -->
+      <div class="bubbles bubble-1"></div>
+
+    </div>    
+    <div id="startplatform">
     </div>
 
 
@@ -19,32 +75,40 @@
       });
 
       var startposition = 20;
+      var counter = 1;
       socket.on('enterRace', function(color, socketid){
         
+        var thisfishid = "fish"+counter;
         var newfish = {
           fishcolor: color,
           id: socketid,
+          domid: thisfishid,
           xpos: startposition
         }
         fish.push(newfish);
         console.log(newfish);
 
-        var thisfish = document.createElement("div");
-        document.body.appendChild(thisfish);
-        thisfish.id = socketid;
-        thisfish.style.position = "absolute";
-        thisfish.style.width = "50px";
-        thisfish.style.height = "50px";
-        thisfish.style.left = startposition;
+        counter++;
+
+        var thisfish = document.getElementById(thisfishid);
         thisfish.style.bottom = 100;
         thisfish.style.backgroundColor = color;
 
-        startposition += 100;
+        // var thisfish = document.createElement("div");
+        // document.body.appendChild(thisfish);
+        // thisfish.id = socketid;
+        // thisfish.style.position = "absolute";
+        // thisfish.style.width = "50px";
+        // thisfish.style.height = "50px";
+        // thisfish.style.left = startposition;
+        // thisfish.style.bottom = 100;
+        // thisfish.style.backgroundColor = color;
+        // startposition += 100;
 
       });
 
       socket.on('updateRace', function(newTotalDist, socketid){
-        var thisfish = document.getElementById(socketid);
+        var thisfish = document.getElementById(socketid); // NEED FIX NEED FIX
         if (newTotalDist >= window.innerHeight-100){
           document.getElementById("texthere").innerHTML = "We have a winner!!";
         } else {
@@ -53,8 +117,9 @@
       });
 
       socket.on('takeoutFish', function(socketid){
-        var thisfish = document.getElementById(socketid);
+        var thisfish = document.getElementById(socketid); // NEED FIX NEED FIX
         thisfish.style.display = "none";
+
       })
     </script>
   </body>
