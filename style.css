@@ -1,17 +1,90 @@
-body {
-  position: relative;
+html,body {
+  position: relative;  
+  background-color: #00CCFF;
+  margin:0;
+  padding:0;
+  font-family: "Helvetica";
 }
 
-p#texthere {
+div#gamewait,div#gameend{
+  display: none;
+}
+
+div.messageconsole {
+  background-color: rgba(255,255,255,0.7);
+  box-shadow: 0px 3px 3px -3px #333333;
+  border-radius: 20px;
+  position: absolute;
+  width: 800px;
+  height:500px;
+  left:250px;
+  top:200px;
+
+  padding:15px;
+  text-align:center;
+  font-size:2em;
+}
+span#fishurl{
+  background-color:#666;
+  color:white;
+  border-radius:5px;
+  padding-left:5px;
+  padding-right:5px;
+  line-height:1.4em;
+}
+button{
+  padding: 0.3em;
+  font-size: 1.5em;
+  background-color: rgba(255,255,255,0.7);
+  border-radius: 10px;
+  border: 1px solid white;
+  box-shadow: 0px 3px 3px -3px black;
+}
+div#pedestal{
+  position:relative;
+  display:block;
+  width:450px;
+  margin-left:175px;
+}
+div.pedestal{
+  background-color: white;
+  border: 4px solid black;
+  border-radius: 2px;
+  position:absolute;
+  width:150px;
+}
+div#pedestal1{
+  left:150;
+}
+div#pedestal2{
+  left:0;
+}
+div#pedestal3{
+  left:300;
+}
+
+div#watersurface {
+  height: 0;
+  width: 100%;
+  position: relative;
   font-style: 'Helvetica';
   font-size: 2em;
-  text-align:center;
+  text-align: center;
+  background: white;
+
+  transition-property:height;
+  transition-duration: 0.2s;
+  transition-timing-function: linear;
+  transition-delay: 0.05s;
 }
 
 #pool{
   background-color: #00CCFF;
-  width: 1000px;
-  height: 700px;
+  width: 1300px;
+  height: 100%;
+  position: relative;
+  margin-left:auto;
+  margin-right:auto;
 }
 
 .lines{
@@ -27,32 +100,37 @@ p#texthere {
 .line-3{
 }
 
-#fish1 {
+#fish1,#fish2,#fish3,#fish4 {
   position: absolute;
+  -webkit-transform: rotate(270deg);
+  transform: rotate(270deg);
+  bottom:100;
+  visibility: hidden;
+}
+
+#spot1,#fish1 {
   margin-left: 50px;
-  -webkit-transform: rotate(270deg);
-  transform: rotate(270deg);
 }
 
-#fish2{
-  position: absolute;
-  margin-left: 250px;
-  -webkit-transform: rotate(270deg);
-  transform: rotate(270deg);  
+#spot2,#fish2{
+  margin-left: 350px;
 }
 
-#fish3{
-  position: absolute;
-  margin-left: 450px;
-  -webkit-transform: rotate(270deg);
-  transform: rotate(270deg);
-}
-
-#fish4{
-  position: absolute;
+#spot3,#fish3{
   margin-left: 650px;
-  -webkit-transform: rotate(270deg);
-  transform: rotate(270deg);
+}
+
+#spot4,#fish4{
+  margin-left: 950px;
+}
+
+.startspots {
+  position: absolute;
+  border-radius:50%;
+  width:280px;
+  height:80px;
+  background-color: rgba(30,30,30,0.7);
+  bottom:20;
 }
 
 /*this shows up beneath fishbodies div for background color tbd from server*/
@@ -120,6 +198,7 @@ p#texthere {
 
 
 .bubbles {
+  display: none;
   position: absolute;
   bottom: 0;
   z-index: 5;

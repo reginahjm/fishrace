@@ -1,0 +1,24 @@
+POOL page loads
+
+POOL - waiting for players to join, shows fish page url in an overlay
+
+PLAYER1 loads FISH page
+  FISH - Takes a pattern
+  POOL - Fish sporting Player1 pattern shows up at bottom of page/ starting line. Any action at this stage doesn't register at this point!!!
+
+PLAYER2-4 join as well by loading FISH page.
+  At this point, no more players can join!! What happens to them? "Sorry... a race is going on"****
+
+FISH page shows instructions, and a button to press when "ready".
+
+All 4 players ready
+  POOL - count down 3...2...1...
+
+Game start
+  POOL - fish start moving up!
+  FISH - sending signals.
+
+A player reaches the finishing line
+  POOL - Overlay, we have a winner!!!
+  FISH - winning player "YOU WON!"
+

@@ -3,14 +3,14 @@
     <link rel="stylesheet" type="text/css" href="style.css">
   </head>
   <body>
-    <p id="texthere"></p>
+    <div id="watersurface"></div>
 
     <div id="pool">
 
-      <!-- vertical lines  -->
-<!--       <div class ="lines line-1"></div>
-      <div class ="lines line-2"></div>
-      <div class ="lines line-3"></div> -->
+      <div class="startspots" id="spot1"></div>
+      <div class="startspots" id="spot2"></div>
+      <div class="startspots" id="spot3"></div>
+      <div class="startspots" id="spot4"></div>
 
       <!-- player 1 -->
       <div id="fish1">
@@ -61,23 +61,98 @@
 
       <!-- Bubble deco -->
       <div class="bubbles bubble-1"></div>
+      <div class="messageconsole" id="gamewait">
+        <p>
+          <span>Visit </span>
+          <span id="fishurl">http://bit.ly/12CWOPX</span>
+          <span> on your mobile to <br>join the race!</span>
+        </p>
+      </div>
+      <div class="messageconsole" id="gamecanstart">
+        <button id="startbutton">START</button>
+      </div>
+      <div class="messageconsole" id="gameend">
+        <p>
+          who's the winner who's the winner
+        </p>
+        <div id="pedestal">
+          <div class="pedestal" id="pedestal1">1</div>
+          <div class="pedestal" id="pedestal2">2</div>
+          <div class="pedestal" id="pedestal3">3</div>
+        </div>
+      </div>
 
     </div>    
     <div id="startplatform">
     </div>
+    <div id="status"></div>
+ 
 
+    </div>
 
     <script src="/socket.io/socket.io.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.3.12/p5.min.js"></script>
+    <script src="p5.dom.js"></script>
+    <!-- ===================SCRIPT HERE SCRIPT HERE SCRIPT HERE====================-->    
     <script type="text/javascript">
+      // PLAYERS
       var fish = [];
+      var fishtofill = [true,true,true,true];
+
+      // GAME FLOW
+      var GAME_WAIT = 0;
+      var GAME_CANSTART = 1;
+      var GAME_RUNNING = 2;
+      var GAME_END = 3;
+      var gameState = GAME_WAIT;
+
+      // SOCKET THINGS
       var socket = io.connect('http://104.131.169.15:3000');
 
+      function toggleMessage(gameState_){
+        document.getElementById("gamewait").style.display = "none";
+        document.getElementById("gamecanstart").style.display = "none";
+        document.getElementById("gameend").style.display = "none";
+        var messageid;
+        if (gameState_== GAME_WAIT){
+          messageid="gamewait";
+        } else if (gameState_ == GAME_CANSTART){
+          messageid="gamecanstart";
+        } else if (gameState_ == GAME_RUNNING){
+          messageid="";
+        } else if (gameState_ == GAME_END){
+          messageid="gameend";
+        }
+        if (messageid != ""){
+          document.getElementById(messageid).style.display = "block";
+        }
+      }
+
+      // LOCK CONTROLLER
       socket.on('connect', function(){
         console.log("connected");
+        socket.emit('iamcontroller');
       });
+
+      socket.on('duplicateController', function(){
+        duplicate = true;
+        document.getElementById("pool").style.display="none";
+        document.getElementById("status").innerHTML = "duplicate controller";
+        socket.disconnect(); 
+      });
+
+      // GAME FLOW + COMMUNICATION WITH SERVER
+      socket.on('newgamestate',function(newGameState){
+        console.log("new game state: "+newGameState);
+        gameState = newGameState;
+        toggleMessage(gameState);
+      });
+
+      //===========================================
 
       var startposition = 20;
       var counter = 1;
+
       socket.on('enterRace', function(color, socketid){
         
         var thisfishid = "fish"+counter;
@@ -86,51 +161,114 @@
           fishcolor: color,
           id: socketid,
           domid: thisfishid,
-          xpos: startposition
+          xpos: startposition,
+          rank: 9999
         }
         fish.push(newfish);
+
+        if (fish.length==4){
+          console.log("sparked off at enterRace, why not allFish count?");
+          gameState = GAME_CANSTART;
+          socket.emit("newgamestate",gameState);
+          toggleMessage(gameState);
+        }
+
         console.log(newfish);
         counter++;
 
         var thisfish = document.getElementById(thisfishid);
         var thisfishbody = document.getElementById(thisfishid_);
-        thisfish.style.bottom = 100;
         thisfishbody.style.backgroundColor = color;
-
-
-        // var thisfish = document.createElement("div");
-        // document.body.appendChild(thisfish);
-        // thisfish.id = socketid;
-        // thisfish.style.position = "absolute";
-        // thisfish.style.width = "50px";
-        // thisfish.style.height = "50px";
-        // thisfish.style.left = startposition;
-        // thisfish.style.bottom = 100;
-        // thisfish.style.backgroundColor = color;
-        // startposition += 100;
-
+        thisfish.style.visibility = "visible";
       });
 
+      var numReachFinishLine = 0;
+      var rank = 0;
       socket.on('updateRace', function(newTotalDist, socketid){
-        for (var i=0;i<fish.length;i++){
-          console.log(socketid+" "+newTotalDist);
-          if (fish[i].id == socketid){
-            var thisfish = document.getElementById(fish[i].domid); // NEED FIX NEED FIX
-            if (newTotalDist >= window.innerHeight-100){
-              document.getElementById("texthere").innerHTML = "We have a winner!!";
-            } else {
-              thisfish.style.bottom = newTotalDist+100;
+        if (gameState == GAME_RUNNING){
+          for (var i=0;i<fish.length;i++){
+            console.log(socketid+" "+newTotalDist);
+            if (fish[i].id == socketid){
+              var thisfish = document.getElementById(fish[i].domid);
+              if (newTotalDist >= window.innerHeight-100){
+                if (fish[i].rank == 9999){
+                  var watersurface = document.getElementById("watersurface");
+                  watersurface.style.height = "200px";
+                  numReachFinishLine++;
+                  rank++;
+                  // tell fish their rank
+                  console.log(fish[i].domid+" "+rank);
+                  fish[i].rank = rank;
+                  socket.emit('fishrank',fish[i].id,fish[i].rank); //fish.html
+                }
+              } else {
+                thisfish.style.bottom = newTotalDist+100;
+              }
+              break;
             }
-            break;
+          }
+
+          if (numReachFinishLine==fish.length){
+            console.log("everyfish reached finishing line!");
+            gameState = GAME_END;
+            socket.emit('newgamestate',gameState);
+            toggleMessage(gameState);
           }
         }
       });
 
       socket.on('takeoutFish', function(socketid){
-        var thisfish = document.getElementById(socketid); // NEED FIX NEED FIX
-        thisfish.style.display = "none";
+
+        // take disconnected sprite out
+        for (var i=0;i<fish.length;i++){
+          // game-state dependent actions
+          if (gameState == GAME_WAIT){
+            document.getElementById(fish[i].domid).style.visible = "hidden";
+            var temp = fish[i].domid;              
+          }
+          // take out fish from array
+          if (fish[i].id == socketid){
+            fish.splice(i,1);
+          }
+          break;
+        }
+        //var thisfish = document.getElementById(socketid); // NEED FIX NEED FIX
+        //thisfish.style.display = "none";
 
       })
+
+      // ====================== GAME FLOW ===========================
+
+/*
+      if (gameState == GAME_WAIT){
+
+        // letting players sync to game
+        // taking no motion at this stage
+        // showing url and instructions
+        // showing start button
+        // if phones disconnect, other phones can join
+
+      } else if (gameState == GAME_RUNNING){
+
+        // take input from phones
+        // show 1,2,3,4 for each round
+        // ROUND object. ID = start timestamp, firstplace, secondplace, thirdplace
+        // if phones disconnect, other phones can't join, sprite just freezes in screen
+
+      } else if (gameState == GAME_END){
+
+        // if phones disconnect, other phones can't join
+        // phones show "thanks for playing fish race"
+        // when press rematch, disconnect all sockets in fish array
+
+      }
+*/
+      document.getElementById("startbutton").addEventListener("click", function(){
+        gameState = GAME_RUNNING;
+        socket.emit("newgamestate",gameState);
+        toggleMessage(gameState);
+      });
+
     </script>
   </body>
 </html>

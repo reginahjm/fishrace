@@ -1,5 +1,6 @@
 <html>
   <head>
+    <link rel="stylesheet" type="text/css" href="fish.css">
   </head>
   <body>
     <div id="map">null</div>
@@ -20,8 +21,12 @@
 
         document.body.style.backgroundColor = "black";
         document.body.style.color = "white";
-        document.getElementById("mop").innerHTML = "YOU ARE NOT A FISH HAHAHAHA";
+        document.getElementById("mop").innerHTML = "Sorry, there aren't any openings at the moment :(";
         document.getElementById("map").style.display = "none";
+      });
+      socket.on('fishrankfish',function(rank){
+        document.body.style.color = "white";
+        document.getElementById("mop").innerHTML = "YAY YOU ARE NUMBER "+rank;
       });
 
       if (areyoufish==true){
@@ -35,19 +40,19 @@
         var prev = distance = spurt = 0;
         var curr = -2;
 
-        var alpha;
+        var beta;
 
         function orientationChange(e) {    
           now = new Date().getMilliseconds();
-          alpha = Math.floor(e.alpha); //FISH MOVEMENT HERE          
+          beta = Math.floor(e.beta); //FISH MOVEMENT HERE          
           var map = document.getElementById("map");
-          map.innerHTML = alpha+"px";
+          map.innerHTML = beta+"px";
 
           if (curr < 0){
-            curr = alpha;
+            curr = beta;
           }
           prev = curr;
-          curr = alpha;
+          curr = beta;
           distance = Math.abs(curr-prev);
           spurt += distance;
 
