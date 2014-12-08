@@ -79,25 +79,20 @@ div#watersurface {
 }
 
 #pool{
-  background-color: #00CCFF;
+  background: linear-gradient(0deg,#00CCFF,#B3E8F5);
   width: 1300px;
   height: 100%;
   position: relative;
   margin-left:auto;
   margin-right:auto;
 }
-
-.lines{
-  border-left: 1px solid black;
-  height: 10px;
-  margin-left: 250px;
-}
-
-.line-2{
-  left: 500px;
-}
-
-.line-3{
+/*water top part white half circle*/
+.top{
+  position: absolute;
+  width: 1200px;
+  height: 45px;
+  margin-top: -10px;
+  background-image: url("circle.png");
 }
 
 #fish1,#fish2,#fish3,#fish4 {
@@ -158,11 +153,23 @@ div#watersurface {
   radial-gradient(at 100% 100%,     transparent 9px, #613 10px, transparent 11px);  
   background-size: 20px 20px;
 }
+/*fish body same as above*/
+.fishbody-2{
+  left: 200px;
+}
 
-.eye {
+.fishbody-3{
+  left: 200px;
+}
+
+.fishbody-4{
+  left: 200px;
+}
+
+.eyes {
   position: absolute;
-  margin-left: 100px;
-  margin-top: 20px;
+  margin-left: 150px;
+  margin-top: 6px;
   z-index: 1;
   background-color: white;
   border-radius: 50%;
@@ -170,10 +177,10 @@ div#watersurface {
   height: 20px;
 }
 
-.pupil {
+.pupils {
   position: absolute;
   z-index: 2;
-  margin-left: 2px;
+  margin-left: 8px;
   margin-top: 5px;
   background-color: black;
   border-radius: 50%;
@@ -181,18 +188,54 @@ div#watersurface {
   width: 10px;
 }
 
+/*now we got two eyeballs*/
+.eye-2{
+  top:120px;
+}
+
+.pupil-2{
+}
+
+/*fish tale part*/
 .fin {
-  margin-top: -120px; 
-  margin-left: -15px;
+  margin-top: -115px; 
+  margin-left: -10px;
   background-color: orange;
   border-radius: 50%;
   transform: rotate(40deg);
   width: 80px;
-  height: 50px;
+  height: 40px;
 }
-
+/*fish tale part II*/
 .fin-bottom {
   margin-top: -10px;
+  transform: rotate(-40deg);
+}
+
+/*fin tip*/
+.fin-middle {
+  position: absolute;
+  left:110px;
+  top: 215px;
+  width: 70px;
+  height: 10px;
+  transform: rotate(180deg);
+}
+/*side fin*/
+.fin-side{
+  position: absolute;
+  top: 110px;
+  left: 100px;
+  height:+30px;
+  border-radius: 70%;
+}
+/*side fin II */
+.fin-side-2{
+  position: absolute;
+  top: 310px;
+  left: 100px;
+  height:+30px;
+  border-radius: 70%;
   transform: rotate(-40deg);
 }
 
