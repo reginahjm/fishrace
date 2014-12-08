@@ -217,25 +217,30 @@
         }
       });
 
+  // SOMETHING VERY WEIRD WITH TAKE OUT FISH
       socket.on('takeoutFish', function(socketid){
-
         // take disconnected sprite out
+        console.log("to be removed: "+socketid);
+
         for (var i=0;i<fish.length;i++){
+          console.log(fish[i].id);
+
           // game-state dependent actions
-          if (gameState == GAME_WAIT){
-            document.getElementById(fish[i].domid).style.visible = "hidden";
-            var temp = fish[i].domid;              
+          if (gameState == GAME_WAIT && fish[i].id == socketid){
+            console.log(fish[i].domid);
+            document.getElementById(fish[i].domid).style.visibility = "hidden";
+            //var temp = fish[i].domid;              
           }
           // take out fish from array
           if (fish[i].id == socketid){
             fish.splice(i,1);
+            break;
           }
-          break;
+
         }
         //var thisfish = document.getElementById(socketid); // NEED FIX NEED FIX
         //thisfish.style.display = "none";
-
-      })
+      });
 
       // ====================== GAME FLOW ===========================
 

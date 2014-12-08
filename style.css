@@ -52,15 +52,21 @@ div.pedestal{
   border-radius: 2px;
   position:absolute;
   width:150px;
+  bottom:-350px;
+  font-size:1.5em;
 }
 div#pedestal1{
   left:150;
+  height:150px;
+  z-index: 1;
 }
 div#pedestal2{
   left:0;
+  height:100px;
 }
 div#pedestal3{
   left:300;
+  height:60px;
 }
 
 div#watersurface {
@@ -106,6 +112,10 @@ div#watersurface {
   transform: rotate(270deg);
   bottom:100;
   visibility: hidden;
+  transition-property:visibility;
+  transition-duration: 0.2s;
+  transition-timing-function: linear;
+  transition-delay: 0.05s;
 }
 
 #spot1,#fish1 {
