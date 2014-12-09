@@ -102,9 +102,15 @@
           who's the winner who's the winner
         </p>
         <div id="pedestal">
-          <div class="pedestal" id="pedestal1">1</div>
-          <div class="pedestal" id="pedestal2">2</div>
-          <div class="pedestal" id="pedestal3">3</div>
+          <div class="pedestal" id="pedestal1">1
+            <div class="sushi" id="sushi1"></div>
+          </div>
+          <div class="pedestal" id="pedestal2">2
+            <div class="sushi" id="sushi2"></div>
+          </div>
+          <div class="pedestal" id="pedestal3">3
+            <div class="sushi" id="sushi3"></div>
+          </div>
         </div>
       </div>
 
@@ -153,6 +159,36 @@
           document.getElementById(messageid).style.display = "block";
         }
       }
+
+      function checkGameEnd(){
+        if (numReachFinishLine==fish.length){
+          console.log("everyfish reached finishing line!");
+          gameState = GAME_END;
+
+          var rankColor = ["","",""];
+          for (var i=0;i<fish.length;i++){
+            if (fish[i].rank == 1){
+              rankColor[0] = fish[i].fishcolor;
+            } else if (fish[i].rank == 2){
+              rankColor[1] = fish[i].fishcolor;
+            } else if (fish[i].rank == 3){
+              rankColor[2] = fish[i].fishcolor;
+            }
+          }
+          for (var i=0;i<rankColor.length;i++){
+            if (rankColor[i] != ""){
+              document.getElementById("sushi"+(i+1)).style.backgroundColor = rankColor[i];  
+              document.getElementById("sushi"+(i+1)).style.visibility = "visible";                
+            } else {
+              document.getElementById("sushi"+(i+1)).style.visibility = "hidden";
+            }
+            
+          }
+
+          socket.emit('newgamestate',gameState);
+          toggleMessage(gameState); 
+        }       
+      }      
 
       // LOCK CONTROLLER
       socket.on('connect', function(){
@@ -217,7 +253,7 @@
             console.log(socketid+" "+newTotalDist);
             if (fish[i].id == socketid){
               var thisfish = document.getElementById(fish[i].domid);
-              if (newTotalDist >= window.innerHeight-100){
+              if (newTotalDist >= window.innerHeight-200){
                 if (fish[i].rank == 9999){
                   var watersurface = document.getElementById("watersurface");
                   watersurface.style.height = "200px";
@@ -235,12 +271,7 @@
             }
           }
 
-          if (numReachFinishLine==fish.length){
-            console.log("everyfish reached finishing line!");
-            gameState = GAME_END;
-            socket.emit('newgamestate',gameState);
-            toggleMessage(gameState);
-          }
+          checkGameEnd();
         }
       });
 
@@ -260,9 +291,12 @@
           }
           // take out fish from array
           if (fish[i].id == socketid){
+            document.getElementById(fish[i].domid).style.opacity = 0.7;
             fish.splice(i,1);
             break;
           }
+
+          checkGameEnd();
 
         }
         //var thisfish = document.getElementById(socketid); // NEED FIX NEED FIX
