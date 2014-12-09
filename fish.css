@@ -1,6 +1,14 @@
 html,body{
   font-family:"helvetica";
   font-size:3em;
+  overflow-x:hidden;
+  overflow-y:hidden;
+}
+
+body{
+  background:
+  radial-gradient(circle at 0% 50%, transparent 9px, #613 10px, transparent 11px) 0px 10px,
+  radial-gradient(at 100% 100%,     transparent 9px, #613 10px, transparent 11px);  
 }
 
 

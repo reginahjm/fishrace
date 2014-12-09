@@ -21,7 +21,7 @@
 
         document.body.style.backgroundColor = "black";
         document.body.style.color = "white";
-        document.getElementById("mop").innerHTML = "Sorry, there aren't any openings at the moment :(";
+        document.getElementById("mop").innerHTML = "Sorry, there aren't any openings at the moment :( please wait for next round";
         document.getElementById("map").style.display = "none";
       });
       socket.on('fishrankfish',function(rank){
@@ -37,7 +37,7 @@
         });
 
         var now;
-        var prev = distance = spurt = 0;
+        var prev = distance = spurt = pivot = 0;
         var curr = -2;
 
         var beta;
@@ -45,21 +45,33 @@
         function orientationChange(e) {    
           now = new Date().getMilliseconds();
           beta = Math.floor(e.beta); //FISH MOVEMENT HERE          
-          var map = document.getElementById("map");
-          map.innerHTML = beta+"px";
+          // var map = document.getElementById("map");
+          // map.innerHTML = beta+"px";
 
           if (curr < 0){
             curr = beta;
           }
           prev = curr;
           curr = beta;
+          //MOVING FORWARD
           distance = Math.abs(curr-prev);
           spurt += distance;
-
           if (spurt >= 90){
-            socket.emit("move"); 
-            spurt = spurt - 90;       
+            var send = Math.floor(spurt/90);
+            socket.emit("move",send); 
+            spurt = spurt - send*90;       
           }
+          //LEFT/RIGHT PIVOT
+/*          pivot = curr - prev;
+          if (pivot > 10){
+            pivot = 10;
+          }
+          if (pivot < -10){
+            pivot = -10;
+          }
+          var map = document.getElementById("map");
+          map.innerHTML = pivot;
+          socket.emit("pivot",pivot);*/
         }
       //===============================================================
       }

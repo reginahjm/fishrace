@@ -104,10 +104,10 @@ io.sockets.on('connection',
     /*----------------------------------------------------*/
 
     socket.on('move',
-      function () {
+      function (send) {
         for (var i=0; i<allFish.length; i++){
           if (allFish[i]===socket && gameState == GAME_RUNNING){
-            allFish[i].totalDist += 5;
+            allFish[i].totalDist += 7*send;
             // console.log(i+" "+allFish[i].totalDist);
             socket.broadcast.emit("updateRace",allFish[i].totalDist,allFish[i].id);
             break; 
@@ -115,6 +115,10 @@ io.sockets.on('connection',
         }
       }
     );
+
+    socket.on('pivot',function(pivotval){
+      controller.emit("pivotpool",socket.id, pivotval);
+    });
 
     socket.on('fishrank',function(socketid,rank){
       for (var i=0;i<allFish.length;i++){

@@ -1,10 +1,11 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="style.css">
+
   </head>
   <body>
     <div id="watersurface"></div>
-
+    <div class="top"></div>
     <div id="pool">
 
       <div class="startspots" id="spot1"></div>
@@ -13,7 +14,7 @@
       <div class="startspots" id="spot4"></div>
 
 <!-- watertop -->
-<div class="top"></div>
+
 
 <!-- player 1 -->
   <div id="fish1">
@@ -26,7 +27,7 @@
         <div class="pupils pupil-2"></div>
       </div>
     </div>
-    <div class="fin fin-side"></div>
+    <div class="fin fin-side" id="fintest"></div>
     <div class="fin fin-side-2"></div>
     <div class="fin"></div>
     <div class="fin fin-bottom"></div>
@@ -88,10 +89,11 @@
       <!-- Bubble deco -->
       <div class="bubbles bubble-1"></div>
       <div class="messageconsole" id="gamewait">
+        <h2>The Great Fish Race</h2>
         <p>
           <span>Visit </span>
-          <span id="fishurl">http://bit.ly/12CWOPX</span>
-          <span> on your mobile to <br>join the race!</span>
+          <span id="fishurl">http://bit.ly/syncfish</span>
+          <span> on your mobile to <br>enter the race!</span>
         </p>
       </div>
       <div class="messageconsole" id="gamecanstart">
@@ -99,17 +101,26 @@
       </div>
       <div class="messageconsole" id="gameend">
         <p>
-          who's the winner who's the winner
+          The winner is...
         </p>
         <div id="pedestal">
           <div class="pedestal" id="pedestal1">1
-            <div class="sushi" id="sushi1"></div>
+            <div class="sushi" id="sushi1">
+             <div class="sushiFish"></div>
+             <div class="sushiRice" id="sushiRice1"></div>
+            </div>
           </div>
           <div class="pedestal" id="pedestal2">2
-            <div class="sushi" id="sushi2"></div>
+            <div class="sushi"  id="sushi2">
+             <div class="sushiFish"></div>
+             <div class="sushiRice" id="sushiRice2"></div>
+           </div>
           </div>
           <div class="pedestal" id="pedestal3">3
-            <div class="sushi" id="sushi3"></div>
+            <div class="sushi"  id="sushi3">
+             <div class="sushiFish"></div>
+             <div class="sushiRice" id="sushiRice3"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -121,7 +132,8 @@
  
 
     </div>
-
+<!--    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>-->
     <script src="/socket.io/socket.io.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.3.12/p5.min.js"></script>
     <script src="p5.dom.js"></script>
@@ -129,7 +141,7 @@
     <script type="text/javascript">
       // PLAYERS
       var fish = [];
-      var fishtofill = [true,true,true,true];
+      var fishtofill = [];
 
       // GAME FLOW
       var GAME_WAIT = 0;
@@ -177,7 +189,7 @@
           }
           for (var i=0;i<rankColor.length;i++){
             if (rankColor[i] != ""){
-              document.getElementById("sushi"+(i+1)).style.backgroundColor = rankColor[i];  
+              document.getElementById("sushiRice"+(i+1)).style.backgroundColor = rankColor[i];  
               document.getElementById("sushi"+(i+1)).style.visibility = "visible";                
             } else {
               document.getElementById("sushi"+(i+1)).style.visibility = "hidden";
@@ -188,8 +200,21 @@
           socket.emit('newgamestate',gameState);
           toggleMessage(gameState); 
         }       
-      }      
+      }
 
+//animation in progress
+/*      function fishloop(){
+        $('#fintest').animate(
+          {borderSpacing:50}, 
+          {step: function(now,fx){
+            $(this).css('-webkit-transform','rotate('+now+'deg)');
+            $(this).css('-moz-transform', 'rotate('+now+'deg)');
+            $(this).css('transform','rotate('+now+'deg)');        
+            }, duration:'slow'
+          }, 
+          'linear',fishloop);
+      }      
+*/
       // LOCK CONTROLLER
       socket.on('connect', function(){
         console.log("connected");
@@ -217,32 +242,43 @@
 
       socket.on('enterRace', function(color, socketid){
         
-        var thisfishid = "fish"+counter;
-        var thisfishid_ = "body-"+counter;
+        var thisfishid,thisfishid_;
+        if (fishtofill.length <= 0){
+          thisfishid = "fish"+counter;
+          thisfishid_ = "body-"+counter;
+          counter++;
+        } else {
+          thisfishid = fishtofill[0].domid;
+          thisfishid_ = fishtofill[0].domid_;
+          fishtofill.splice(0,1);
+        }     
+
         var newfish = {
           fishcolor: color,
           id: socketid,
           domid: thisfishid,
+          domid_: thisfishid_,
           xpos: startposition,
+          rotate: 270,
           rank: 9999
         }
         fish.push(newfish);
 
         if (fish.length==4){
-          console.log("sparked off at enterRace, why not allFish count?");
           gameState = GAME_CANSTART;
           socket.emit("newgamestate",gameState);
           toggleMessage(gameState);
         }
 
         console.log(newfish);
-        counter++;
+
 
         var thisfish = document.getElementById(thisfishid);
         var thisfishbody = document.getElementById(thisfishid_);
         console.log(thisfishid_);
         thisfishbody.style.backgroundColor = color;
         thisfish.style.visibility = "visible";
+        thisfish.style.opacity = 1;
       });
 
       var numReachFinishLine = 0;
@@ -275,7 +311,16 @@
         }
       });
 
-  // SOMETHING VERY WEIRD WITH TAKE OUT FISH
+      socket.on('pivotpool', function(socketid,pivotval){
+        for (var i=0;i<fish.length;i++){
+          if (fish[i].id == socketid){
+            // document.getElementById(fish[i].domid).style.webkitTransform = "rotate("+fish[i].rotate+"deg)";
+            fish[i].rotate += pivotval;
+            document.getElementById(fish[i].domid).style.transform = "rotate("+fish[i].rotate+"deg)";
+          }
+        }
+      });
+
       socket.on('takeoutFish', function(socketid){
         // take disconnected sprite out
         console.log("to be removed: "+socketid);
@@ -285,9 +330,9 @@
 
           // game-state dependent actions
           if (gameState == GAME_WAIT && fish[i].id == socketid){
-            console.log(fish[i].domid);
             document.getElementById(fish[i].domid).style.visibility = "hidden";
-            //var temp = fish[i].domid;              
+            fishtofill.push(fish[i]);
+            console.log(fishtofill[length-1]);        
           }
           // take out fish from array
           if (fish[i].id == socketid){
