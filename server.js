@@ -56,8 +56,8 @@ io.sockets.on('connection',
         gameState = GAME_WAIT;
         socket.emit("newgamestate",GAME_WAIT);
         //DISCONNECT ALL FISH AT START OF CONTROLLER
-        for (i=0;i<allFish.length;i++){
-          allFish[i].disconnect();
+        for (i=allFish.length;i>0;i--){
+          allFish[i-1].disconnect();
         }
       } else {
         socket.emit("duplicateController");
