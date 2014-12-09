@@ -152,7 +152,6 @@ div#watersurface {
 /* reference from Franklin's fish and motified */
 
 .fishbodies {
-  position: relative;
   margin-top: 30px;
   margin-left: 40px;
   border-radius: 50%;
@@ -164,22 +163,22 @@ div#watersurface {
   background-size: 20px 20px;
 }
 /*fish body same as above*/
-.fishbody-2{
+#body-2{
   left: 200px;
 }
 
-.fishbody-3{
+#body-3{
   left: 200px;
 }
 
-.fishbody-4{
+#body-4{
   left: 200px;
 }
 
 .eyes {
   position: absolute;
   margin-left: 150px;
-  margin-top: 6px;
+  margin-top: 18px;
   z-index: 1;
   background-color: white;
   border-radius: 50%;
@@ -242,7 +241,7 @@ div#watersurface {
 /*side fin II */
 .fin-side-2{
   position: absolute;
-  top: 310px;
+  top: 298px;
   left: 100px;
   height:+30px;
   border-radius: 70%;

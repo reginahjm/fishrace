@@ -17,7 +17,7 @@
 
 <!-- player 1 -->
   <div id="fish1">
-    <div class="fishbodies body-1">
+    <div class="fishbodies" id="body-1">
       <div class="eyes eye-1">
         <div class="pupils pupil-1"></div>
       </div>
@@ -35,7 +35,7 @@
 
   <!-- player 2 -->
   <div id="fish2">
-    <div class="fishbodies body-2">
+    <div class="fishbodies" id="body-2">
       <div class="eyes eye-1">
           <div class="pupils pupil-1"></div>
        </div>
@@ -52,7 +52,7 @@
 
   <!-- player 3 -->
   <div id="fish3">
-    <div class="fishbodies body-3">
+    <div class="fishbodies" id="body-3">
       <div class="eyes eye-1">
           <div class="pupils pupil-1"></div>
        </div>
@@ -69,7 +69,7 @@
 
   <!-- player 4 -->
   <div id="fish4">
-    <div class="fishbodies body-4">
+    <div class="fishbodies" id="body-4">
       <div class="eyes eye-1">
         <div class="pupils pupil-1"></div>
        </div>
@@ -204,6 +204,7 @@
 
         var thisfish = document.getElementById(thisfishid);
         var thisfishbody = document.getElementById(thisfishid_);
+        console.log(thisfishid_);
         thisfishbody.style.backgroundColor = color;
         thisfish.style.visibility = "visible";
       });
