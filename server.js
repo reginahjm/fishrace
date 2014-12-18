@@ -6,18 +6,23 @@ var url = require('url');
 httpServer.listen(3000);
 console.log("Listening on 3000");
 
+var fishModel=[];
+var currFishModel;
+var IPHONE_FISH = 0;
+var ANDROID_FISH = 1;
+
 // =================== HTTP SERVER ====================
 function requestHandler(req,res){
-  
+
   var parsedUrl = url.parse(req.url);
   console.log("The request is " + parsedUrl.pathname);
 
   var readUrl = parsedUrl.pathname;
   if (readUrl == '/'){
-    readUrl = '/index.html';
+    readUrl = '/fish.html';
   }
 
-  fs.readFile(__dirname + parsedUrl.pathname, 
+  fs.readFile(__dirname + readUrl, 
     function (err, data){
       if (err){
         res.writeHead(500);
@@ -27,6 +32,22 @@ function requestHandler(req,res){
       res.end(data);
     }
   );
+
+  if (readUrl == '/fish.html'){
+    if (req.headers['user-agent'].match(/iphone/i)) {
+      console.log("It's an iphone"); 
+      currFishModel = IPHONE_FISH;
+    } else if (req.headers['user-agent'].match(/android/i)) {
+      console.log("It's an android");
+      currFishModel = ANDROID_FISH;
+    } else if (req.headers['user-agent'].match(/windows/i)) {
+      console.log("It's a windows phone! Probably won't work...");
+      currFishModel = ANDROID_FISH;
+    } else {
+      console.log("It's probably a mac. Should use a mobile device!");
+    }    
+  }
+
 }
 
 // ==================== SOCKET.IO =====================
@@ -45,6 +66,7 @@ var controller;
 
 io.sockets.on('connection',
   function(socket){
+
     /*----------- Confirm identity from pool page--------*/
     socket.on('iamcontroller',function(){
       console.log("iamcontroller run");
@@ -70,10 +92,11 @@ io.sockets.on('connection',
     socket.on('iamfish', function(){    
       console.log("i am a fish: "+socket.id+". "+allFish.length);
 
-      if (allFish.length < 4 && controllerLocked && gameState == GAME_WAIT){
+      if (allFish.length < 4 && controllerLocked && (gameState == GAME_WAIT || gameState == GAME_CANSTART)){
         // Add to players array
         socket.totalDist = 0;
         allFish.push(socket);
+        fishModel.push(currFishModel);
         console.log("server: sure you are fish. "+allFish.length);
 
         /*check game state FOR SOME REASON IT"S NOT EMITTING EVEN THO IT"S RUNNING THIS SNIPPET D: D:
@@ -89,11 +112,16 @@ io.sockets.on('connection',
         var blue = Math.floor(Math.random()*155)+100;
         var color = "rgba("+red+","+green+","+blue+",1)";
         socket.emit("appearance",color); //fish.html
+        socket.emit("whichPhone",fishModel[fishModel.length-1]); // 1=ANDROID; 0=IPHONE
         socket.broadcast.emit("enterRace", color,socket.id); //pool.html
       } else {
         console.log("actually you are not");
         socket.emit("younotfish");
       }      
+    });
+
+    socket.on('iamphone',function(msg) {
+      console.log(msg);
     });
 
     socket.on("newgamestate", function(newGameState){
@@ -117,6 +145,7 @@ io.sockets.on('connection',
     );
 
     socket.on('pivot',function(pivotval){
+      // console.log('sending pivot '+pivotval);
       controller.emit("pivotpool",socket.id, pivotval);
     });
 

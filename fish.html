@@ -3,13 +3,14 @@
     <link rel="stylesheet" type="text/css" href="fish.css">
   </head>
   <body>
-    <div id="map">null</div>
+    <div class="fishbodies">
+    <div id="map"></div>
     <div id="mop"></div>
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
       var socket = io.connect('http://104.131.169.15:3000');
       var areyoufish = true;
-
+      var whichPhone = 1;
 
       socket.on('connect', function(){
         console.log("connected");
@@ -24,6 +25,7 @@
         document.getElementById("mop").innerHTML = "Sorry, there aren't any openings at the moment :( please wait for next round";
         document.getElementById("map").style.display = "none";
       });
+
       socket.on('fishrankfish',function(rank){
         document.body.style.color = "white";
         document.getElementById("mop").innerHTML = "YAY YOU ARE NUMBER "+rank;
@@ -31,47 +33,63 @@
 
       if (areyoufish==true){
       // =================== IF YOU ARE A FISH =========================
-        window.addEventListener('deviceorientation',orientationChange,false);        
+        window.addEventListener('deviceorientation',orientationChange,false);
+
         socket.on('appearance', function(color){
           document.body.style.backgroundColor = color;
         });
 
+        var map = document.getElementById("map");
+        socket.on('whichPhone', function(fishModel){
+          // 1=ANDROID;0=IPHONE
+          if (fishModel==0){
+            whichPhone = 0;
+            socket.emit('iamphone', "iphone desu");
+            map.innerHTML = "iphone";
+          } else {
+            whichPhone = 1;
+            map.innerHTML = "android";
+            socket.emit('iamphone', "android desu");
+          }
+        });
+
         var now;
-        var prev = distance = spurt = pivot = 0;
-        var curr = -2;
+        var prev = distance = spurt = pivot = cpivot = ppivot = 0;
+        var curr = -9999;
 
         var beta;
 
         function orientationChange(e) {    
           now = new Date().getMilliseconds();
           beta = Math.floor(e.beta); //FISH MOVEMENT HERE          
-          // var map = document.getElementById("map");
-          // map.innerHTML = beta+"px";
 
-          if (curr < 0){
+          if (curr == -9999){
             curr = beta;
           }
           prev = curr;
           curr = beta;
+
           //MOVING FORWARD
           distance = Math.abs(curr-prev);
+          if (whichPhone==0){
+            distance *= 2.5;
+          }
           spurt += distance;
-          if (spurt >= 90){
-            var send = Math.floor(spurt/90);
+          if (spurt >= 40){
+            var send = Math.floor(spurt/40);
             socket.emit("move",send); 
-            spurt = spurt - send*90;       
+            spurt = spurt - send*40;       
           }
+
           //LEFT/RIGHT PIVOT
-/*          pivot = curr - prev;
-          if (pivot > 10){
-            pivot = 10;
+          if (Math.abs(prev - curr) > 5){
+            ppivot = cpivot;
+            cpivot = curr;
+
+            pivot = ppivot - cpivot;
+            socket.emit("pivot",pivot);
           }
-          if (pivot < -10){
-            pivot = -10;
-          }
-          var map = document.getElementById("map");
-          map.innerHTML = pivot;
-          socket.emit("pivot",pivot);*/
+          
         }
       //===============================================================
       }

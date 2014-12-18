@@ -5,10 +5,12 @@ html,body{
   overflow-y:hidden;
 }
 
-body{
+.fishbodies{
+  width: 1000px;
+  height: 1500px;
   background:
-  radial-gradient(circle at 0% 50%, transparent 9px, #613 10px, transparent 11px) 0px 10px,
-  radial-gradient(at 100% 100%,     transparent 9px, #613 10px, transparent 11px);  
+  radial-gradient(circle at 0% 50%, transparent 98px, #613 100px, transparent 102px) 0px 100px,
+  radial-gradient(at 100% 100%,     transparent 98px, #613 100px, transparent 102px);  
+  background-size: 200px 200px;
+
 }
-
-

@@ -1,3 +1,7 @@
+::-webkit-scrollbar { 
+    display: none; 
+}
+
 html,body {
   position: relative;  
   background: linear-gradient(0deg,#00CCFF,#B3E8F5);
@@ -22,7 +26,7 @@ div.messageconsole {
 
   padding:15px;
   text-align:center;
-  font-size:2em;
+  font-size:2.2em;
 }
 span#fishurl{
   background-color:#666;
@@ -156,7 +160,13 @@ div#watersurface {
   height: 45px;
   margin-top: -10px;
   background-image: url("circle.png");
+}
 
+.toppool{
+  width: 1300px;
+  position: relative;
+  margin-left:auto;
+  margin-right:auto;
 }
 
 #fish1,#fish2,#fish3,#fish4 {
@@ -172,20 +182,38 @@ div#watersurface {
   transition-delay: 0.05s;
 }
 
-#spot1,#fish1 {
+#rank1,#spot1,#fish1 {
   margin-left: 50px;
 }
 
-#spot2,#fish2{
+#rank2,#spot2,#fish2{
   margin-left: 350px;
 }
 
-#spot3,#fish3{
+#rank3,#spot3,#fish3{
   margin-left: 650px;
 }
 
-#spot4,#fish4{
+#rank4,#spot4,#fish4{
   margin-left: 950px;
+}
+
+.rank{
+  position: fixed;
+  width:280px;
+  top: 50px;
+  height:auto;
+  font-size:3em;
+  color:#FF5930;
+  padding-left: 15px;
+  display:block;
+  opacity:0;
+  text-align:center;
+
+  transition-property:opacity;
+  transition-duration: 0.2s;
+  transition-timing-function: linear;
+  transition-delay: 0.05s;
 }
 
 .startspots {

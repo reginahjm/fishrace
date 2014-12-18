@@ -5,7 +5,14 @@
   </head>
   <body>
     <div id="watersurface"></div>
-    <div class="top"></div>
+    <div class="top">
+      <div class="toppool">
+        <div class="rank" id="rank1"></div>
+        <div class="rank" id="rank2"></div>
+        <div class="rank" id="rank3"></div>
+        <div class="rank" id="rank4"></div>
+      </div>
+    </div>
     <div id="pool">
 
       <div class="startspots" id="spot1"></div>
@@ -83,8 +90,8 @@
      <div class="fin"></div>
     <div class="fin fin-bottom"></div>
     <div class="fin fin-middle"></div>
-
   </div>
+
 
       <!-- Bubble deco -->
       <div class="bubbles bubble-1"></div>
@@ -92,11 +99,16 @@
         <h2>The Great Fish Race</h2>
         <p>
           <span>Visit </span>
-          <span id="fishurl">http://bit.ly/syncfish</span>
+          <span id="fishurl">bit.ly/thisfish</span>
           <span> on your mobile to <br>enter the race!</span>
         </p>
       </div>
       <div class="messageconsole" id="gamecanstart">
+        <p>
+          <span>Visit </span>
+          <span id="fishurl">http://bit.ly/thisfish</span>
+          <span> on your mobile to <br>enter the race!</span>
+        </p>
         <button id="startbutton">START</button>
       </div>
       <div class="messageconsole" id="gameend">
@@ -246,10 +258,12 @@
         if (fishtofill.length <= 0){
           thisfishid = "fish"+counter;
           thisfishid_ = "body-"+counter;
+          thisfishrank = "rank"+counter;
           counter++;
         } else {
           thisfishid = fishtofill[0].domid;
           thisfishid_ = fishtofill[0].domid_;
+          thisfishrank = fishtofill[0].rankdiv;
           fishtofill.splice(0,1);
         }     
 
@@ -258,13 +272,14 @@
           id: socketid,
           domid: thisfishid,
           domid_: thisfishid_,
+          rankdiv: thisfishrank,
           xpos: startposition,
           rotate: 270,
           rank: 9999
         }
         fish.push(newfish);
 
-        if (fish.length==4){
+        if (fish.length==2){
           gameState = GAME_CANSTART;
           socket.emit("newgamestate",gameState);
           toggleMessage(gameState);
@@ -289,6 +304,7 @@
             console.log(socketid+" "+newTotalDist);
             if (fish[i].id == socketid){
               var thisfish = document.getElementById(fish[i].domid);
+
               if (newTotalDist >= window.innerHeight-200){
                 if (fish[i].rank == 9999){
                   var watersurface = document.getElementById("watersurface");
@@ -299,6 +315,9 @@
                   console.log(fish[i].domid+" "+rank);
                   fish[i].rank = rank;
                   socket.emit('fishrank',fish[i].id,fish[i].rank); //fish.html
+                  document.getElementById(fish[i].rankdiv).innerHTML = rank;
+                  document.getElementById(fish[i].rankdiv).style.opacity = 1;
+                  //something maybe should change on the pool page, you win! add .rank #rank. display mech.
                 }
               } else {
                 thisfish.style.bottom = newTotalDist+100;
@@ -315,8 +334,11 @@
         for (var i=0;i<fish.length;i++){
           if (fish[i].id == socketid){
             // document.getElementById(fish[i].domid).style.webkitTransform = "rotate("+fish[i].rotate+"deg)";
-            fish[i].rotate += pivotval;
-            document.getElementById(fish[i].domid).style.transform = "rotate("+fish[i].rotate+"deg)";
+            var pivot = pivotval/5;
+            if (fish[i].rotate+pivot <= 300 && fish[i].rotate+pivot >=240){
+              fish[i].rotate += pivot;
+              document.getElementById(fish[i].domid).style.transform = "rotate("+fish[i].rotate+"deg)";
+            }
           }
         }
       });
@@ -329,7 +351,7 @@
           console.log(fish[i].id);
 
           // game-state dependent actions
-          if (gameState == GAME_WAIT && fish[i].id == socketid){
+          if ((gameState == GAME_WAIT || gameState == GAME_CANSTART) && fish[i].id == socketid){
             document.getElementById(fish[i].domid).style.visibility = "hidden";
             fishtofill.push(fish[i]);
             console.log(fishtofill[length-1]);        
